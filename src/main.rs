@@ -1,3 +1,20 @@
+mod difficulty;
+
 fn main() {
-    println!("Hello, world!");
+
+    enum Boxes {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT,
+    }
+
+    let chosen_difficulty = difficulty::get_difficulty();
+        
+    struct Board {
+        boxes: Vec<Boxes>,
+        player_coordinates: [u16]
+    }
+
+
 }
