@@ -4,6 +4,5 @@ mod board;
 
 fn main() {
     let game = game::Game::new(difficulty::Difficulty::Easy);
-
-    println!("{:?}", game.board.boxes)
+    println!("{}", game.board);
 }
