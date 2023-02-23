@@ -9,7 +9,7 @@ pub enum Difficulty {
 }
 
 impl Difficulty {
-    pub const fn get_size(&self) -> usize {
+    pub fn get_size(&self) -> usize {
         match *self {
             Difficulty::Easy => 16,
             Difficulty::Normal => 32,

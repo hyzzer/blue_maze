@@ -1,20 +1,9 @@
+mod game;
 mod difficulty;
+mod board;
 
 fn main() {
+    let game = game::Game::new(difficulty::Difficulty::Easy);
 
-    enum Boxes {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-    }
-
-    let chosen_difficulty = difficulty::get_difficulty();
-        
-    struct Board {
-        boxes: Vec<Boxes>,
-        player_coordinates: [u16]
-    }
-
-
+    println!("{:?}", game.board.boxes)
 }
