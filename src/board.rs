@@ -9,6 +9,8 @@ pub enum Boxes {
     RIGHT,
 }
 
+#[derive(Debug)]
+#[derive(PartialEq)]
 pub enum Direction {
     UP,
     DOWN,
@@ -18,8 +20,9 @@ pub enum Direction {
 
 #[derive(Copy)]
 #[derive(Clone)]
+#[derive(Debug)]
 #[derive(PartialEq)]
-enum WallStatus {
+pub enum WallStatus {
     OPEN,
     CLOSED,
     EDGE,
@@ -29,8 +32,8 @@ pub struct Board {
     pub size: usize,
     pub boxes: Vec<Boxes>,
     pub player_coordinates: [usize; 2],
-    vertical_walls: Vec<WallStatus>,
-    horizontal_walls: Vec<WallStatus>,
+    pub vertical_walls: Vec<WallStatus>,
+    pub horizontal_walls: Vec<WallStatus>,
 }
 
 impl Board {
@@ -53,7 +56,7 @@ impl Board {
         boxes
     }
 
-    fn is_wall_open(&self, box_idx: usize, direction: Direction) -> WallStatus {
+    fn is_wall_open(&self, box_idx: usize, direction: &Direction) -> WallStatus {
         let row_idx = (((box_idx + 1)/self.size) as f32).floor();
         match direction {
             Direction::UP => {
@@ -64,12 +67,13 @@ impl Board {
                 }
             }, 
             Direction::DOWN => {
-                if box_idx > self.size*(self.size - 1) {
+                if box_idx >= self.size*(self.size - 1) {
                     WallStatus::EDGE
                 } else {
                     self.horizontal_walls[box_idx]
                 }
-            },             Direction::LEFT => {
+            },             
+            Direction::LEFT => {
                 if box_idx % self.size == 0 {
                     WallStatus::EDGE
                 } else {
@@ -88,13 +92,13 @@ impl Board {
     }
 
     fn initalize_walls(&mut self) {
-        for _ in 0..self.size {
+        for _ in 0..self.size * (self.size - 1) {
             self.horizontal_walls.push(WallStatus::CLOSED);
             self.vertical_walls.push(WallStatus::CLOSED);
         }
     }
 
-    fn kruskal_algorithm(&self, size: usize) {
+    fn kruskal_algorithm(&mut self, size: usize) {
         fn get_random_box(size: usize) -> usize {
             let mut rng = rand::thread_rng();
             rng.gen_range(0..size)
@@ -112,20 +116,54 @@ impl Board {
             }
         }
         
-        let step = 0;
-        let sequence_numbers: Vec<usize> = Vec::with_capacity(size * size);
-        // TODO : give to each element its index as value
-        let walls: Vec<WallStatus> = Vec::with_capacity(2*size*size-2*size);
-        while step != size*size-1 {
+        let mut step = 0;
+        let mut sequences: Vec<usize> = Vec::with_capacity(size * size);
+        for sequence_idx in 0..size * size {
+            sequences.push(sequence_idx);
+        }
+
+        while step != size*size - 1 {
             let random_box = get_random_box(size * size);
             let random_direction = get_random_direction();
-            if self.is_wall_open(random_box, random_direction) == WallStatus::CLOSED {
-
-                // TODO : change all the boxes with the right sequenceNumber (random_box)
-                // So a for loop with verification on the old sequenceNumber is needed
-
-                // TODO : change the status of the wall (CLOSED -> OPEN) (on horizontal and vertical vectors)
-                // Maybe create a function to do this (it's borring, you have to say if its LEFT then, if its RIGHT then ...)
+            let old_sequence = sequences[random_box];
+            if self.is_wall_open(random_box, &random_direction) == WallStatus::CLOSED {
+                let wall_idx: usize;
+                let new_sequence: usize;
+                let row_idx = (((random_box + 1)/self.size) as f32).floor();
+                match random_direction {
+                    Direction::UP => {
+                        new_sequence = sequences[random_box - size];
+                        wall_idx = random_box - size;
+                    },
+                    Direction::DOWN => {
+                        new_sequence = sequences[random_box + size];
+                        wall_idx = random_box;
+                    },
+                    Direction::LEFT => {
+                        new_sequence = sequences[random_box - 1];
+                        wall_idx = random_box - row_idx as usize - 1;
+                    },
+                    Direction::RIGHT => {
+                        new_sequence = sequences[random_box + 1];
+                        wall_idx = random_box - row_idx as usize;
+                    },
+                };
+                if old_sequence != new_sequence {
+                    if random_direction == Direction::UP || random_direction == Direction::DOWN {
+                        self.horizontal_walls[wall_idx] = WallStatus::OPEN;
+                    } else {
+                        self.vertical_walls[wall_idx] = WallStatus::OPEN;
+                    }
+    
+                    for box_idx in 0..size * size {
+                        if sequences[box_idx] == old_sequence {
+                            sequences[box_idx] = new_sequence;
+                        }
+                    }
+                    println!("{}, {:?}", random_box, random_direction);
+                    println!("{:?} \n", sequences);
+                    step += 1;
+                }
             }
         }
     }
@@ -135,8 +173,8 @@ impl Board {
             size: size,
             boxes: Board::initalize_boxes(size),
             player_coordinates: [0, 0],
-            horizontal_walls: Vec::with_capacity(size),
-            vertical_walls: Vec::with_capacity(size),
+            horizontal_walls: Vec::with_capacity(size * (size - 1)),
+            vertical_walls: Vec::with_capacity(size * (size - 1)),
         };
         new_board.initalize_walls();
         new_board.kruskal_algorithm(size);
@@ -146,10 +184,17 @@ impl Board {
 
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // Vertical
         for row_idx in 0..self.size {
-            write!(f, "{:?}", &self.boxes[self.size*row_idx..self.size*row_idx+self.size])?;
+            write!(f, "{:?}", &self.vertical_walls[(self.size - 1)*row_idx..(self.size - 1)*row_idx + self.size - 1])?;
             writeln!(f)?;
         }
+        writeln!(f)?;
+        // Horizontal
+        for row_idx in 0..self.size - 1 {
+            write!(f, "{:?}", &self.horizontal_walls[(self.size)*row_idx..self.size*row_idx + self.size])?;
+            writeln!(f)?;
+        }   
         Ok(())
     }
 }

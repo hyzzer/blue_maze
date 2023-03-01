@@ -11,9 +11,9 @@ pub enum Difficulty {
 impl Difficulty {
     pub fn get_size(&self) -> usize {
         match *self {
-            Difficulty::Easy => 16,
-            Difficulty::Normal => 32,
-            Difficulty::Hard => 64,
+            Difficulty::Easy => 8,
+            Difficulty::Normal => 16,
+            Difficulty::Hard => 32,
             Difficulty::Error => 0,
         }
     }
