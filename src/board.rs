@@ -2,16 +2,8 @@ use rand::Rng;
 use std::fmt;
 
 #[derive(Debug)]
-pub enum Boxes {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-}
-
-#[derive(Debug)]
 #[derive(PartialEq)]
-pub enum Direction {
+enum Direction {
     UP,
     DOWN,
     LEFT,
@@ -30,32 +22,12 @@ pub enum WallStatus {
 
 pub struct Board {
     pub size: usize,
-    pub boxes: Vec<Boxes>,
     pub player_coordinates: [usize; 2],
     pub vertical_walls: Vec<WallStatus>,
     pub horizontal_walls: Vec<WallStatus>,
 }
 
 impl Board {
-    fn initalize_boxes(size: usize) -> Vec<Boxes> {
-        fn get_random_box() -> Boxes {
-            let mut rng = rand::thread_rng();
-            let random_number = rng.gen_range(0..4);
-            match random_number {
-                0 => Boxes::UP,
-                1 => Boxes::DOWN,
-                2 => Boxes::LEFT,
-                3 => Boxes::RIGHT,
-                _ => unreachable!()
-            }
-        }
-        let mut boxes: Vec<Boxes> = Vec::with_capacity(size * size);   
-        for _ in 0..size * size {
-            boxes.push(get_random_box())
-        }
-        boxes
-    }
-
     fn is_wall_open(&self, box_idx: usize, direction: &Direction) -> WallStatus {
         let row_idx = (((box_idx + 1)/self.size) as f32).floor();
         match direction {
@@ -98,7 +70,7 @@ impl Board {
         }
     }
 
-    fn kruskal_algorithm(&mut self, size: usize) {
+    fn kruskal_algorithm(&mut self) {
         fn get_random_box(size: usize) -> usize {
             let mut rng = rand::thread_rng();
             rng.gen_range(0..size)
@@ -117,13 +89,13 @@ impl Board {
         }
         
         let mut step = 0;
-        let mut sequences: Vec<usize> = Vec::with_capacity(size * size);
-        for sequence_idx in 0..size * size {
+        let mut sequences: Vec<usize> = Vec::with_capacity(self.size * self.size);
+        for sequence_idx in 0..self.size * self.size {
             sequences.push(sequence_idx);
         }
 
-        while step != size*size - 1 {
-            let random_box = get_random_box(size * size);
+        while step != self.size*self.size - 1 {
+            let random_box = get_random_box(self.size * self.size);
             let random_direction = get_random_direction();
             let old_sequence = sequences[random_box];
             if self.is_wall_open(random_box, &random_direction) == WallStatus::CLOSED {
@@ -132,11 +104,11 @@ impl Board {
                 let row_idx = ((random_box/self.size) as f32).floor();
                 match random_direction {
                     Direction::UP => {
-                        new_sequence = sequences[random_box - size];
-                        wall_idx = random_box - size;
+                        new_sequence = sequences[random_box - self.size];
+                        wall_idx = random_box - self.size;
                     },
                     Direction::DOWN => {
-                        new_sequence = sequences[random_box + size];
+                        new_sequence = sequences[random_box + self.size];
                         wall_idx = random_box;
                     },
                     Direction::LEFT => {
@@ -155,7 +127,7 @@ impl Board {
                         self.vertical_walls[wall_idx] = WallStatus::OPEN;
                     }
     
-                    for box_idx in 0..size * size {
+                    for box_idx in 0..self.size * self.size {
                         if sequences[box_idx] == old_sequence {
                             sequences[box_idx] = new_sequence;
                         }
@@ -169,13 +141,12 @@ impl Board {
     pub fn new(size: usize) -> Self {
         let mut new_board = Self {
             size: size,
-            boxes: Board::initalize_boxes(size),
             player_coordinates: [0, 0],
             horizontal_walls: Vec::with_capacity(size * (size - 1)),
             vertical_walls: Vec::with_capacity(size * (size - 1)),
         };
         new_board.initalize_walls();
-        new_board.kruskal_algorithm(size);
+        new_board.kruskal_algorithm();
         new_board
     }
 }
