@@ -129,7 +129,7 @@ impl Board {
             if self.is_wall_open(random_box, &random_direction) == WallStatus::CLOSED {
                 let wall_idx: usize;
                 let new_sequence: usize;
-                let row_idx = (((random_box + 1)/self.size) as f32).floor();
+                let row_idx = ((random_box/self.size) as f32).floor();
                 match random_direction {
                     Direction::UP => {
                         new_sequence = sequences[random_box - size];
@@ -160,8 +160,6 @@ impl Board {
                             sequences[box_idx] = new_sequence;
                         }
                     }
-                    println!("{}, {:?}", random_box, random_direction);
-                    println!("{:?} \n", sequences);
                     step += 1;
                 }
             }
