@@ -1,8 +1,7 @@
 use rand::Rng;
 use std::fmt;
 
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum Direction {
     UP,
     DOWN,
@@ -10,10 +9,7 @@ enum Direction {
     RIGHT,
 }
 
-#[derive(Copy)]
-#[derive(Clone)]
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum WallStatus {
     OPEN,
     CLOSED,
