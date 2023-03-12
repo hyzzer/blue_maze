@@ -29,7 +29,7 @@ fn player_spawn_system(
     commands.spawn(SpriteBundle {
         texture: game_textures.player.clone(),
         transform: Transform {
-            translation: Vec3::new(0., bottom + PLAYER_SIZE.1 / 2. * SPRITE_SCALE, 2.),
+            translation: Vec3::new(0., bottom + PLAYER_SIZE.1 / 2. * SPRITE_SCALE, 4.),
             scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..default()
         },

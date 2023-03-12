@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crate::board::WallStatus;
 use crate::{GameTextures, BoardSize, Walls};
-use crate::assets::{TILE_SIZE, WALL_SIZE};
+use crate::assets::{TILE_SIZE};
 
 pub struct TilemapPlugin;
 
@@ -23,31 +23,37 @@ fn tilemap_spawn_system(
 
     // TOP AND BOTTOM
     for tile_idx in 0..board_size.x + 2 {
-        tile_spawn_system(&mut commands, game_textures.tile_top.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * tile_idx as f32 - TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. + TILE_SIZE.1, 1.));
-        tile_spawn_system(&mut commands, game_textures.tile_bottom.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * tile_idx as f32 - TILE_SIZE.0, - start_top + TILE_SIZE.1 / 2. - TILE_SIZE.1, 1.));
+        tile_spawn_system(&mut commands, game_textures.tile_top.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * tile_idx as f32 - TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. + TILE_SIZE.1, 3.));
+        tile_spawn_system(&mut commands, game_textures.tile_bottom.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * tile_idx as f32 - TILE_SIZE.0, - start_top + TILE_SIZE.1 / 2. - TILE_SIZE.1, 3.));
     }
     // LEFT AND RIGHT
     for tile_idx in 0..board_size.y {
         if tile_idx != board_size.y - 1 {
-            tile_spawn_system(&mut commands, game_textures.tile_wall.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. - TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 1.));
+            tile_spawn_system(&mut commands, game_textures.tile_wall.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. - TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 3.));
         }
         else {
             tile_spawn_system(&mut commands, game_textures.tile_road.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. - TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 1.));
         }
         if tile_idx != 0 {
-            tile_spawn_system(&mut commands, game_textures.tile_wall.clone(), Vec3::new(- start_left - TILE_SIZE.0 / 2. + TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 1.));        
+            tile_spawn_system(&mut commands, game_textures.tile_wall.clone(), Vec3::new(- start_left - TILE_SIZE.0 / 2. + TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 3.));        
         }
         else {
             tile_spawn_system(&mut commands, game_textures.tile_road.clone(), Vec3::new(- start_left - TILE_SIZE.0 / 2. + TILE_SIZE.0, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * tile_idx as f32, 1.));        
         }
     }
-    for row_idx in 1..board_size.x - 1 {
-        for column_idx in 1..board_size.y - 1 {
+    for row_idx in 0..board_size.y {
+        for column_idx in 0..board_size.x {
             tile_spawn_system(&mut commands, game_textures.tile_road.clone(), Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * column_idx as f32, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * row_idx as f32, 1.));
             // VERTICAL WALLS
-            if column_idx != 1 {
-                if walls.vertical_walls[column_idx - 2 + (board_size.x - 1) * (row_idx - 1)] == WallStatus::OPEN{
-                    wall_spawn_system(&mut commands, Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * column_idx as f32 - WALL_SIZE.0 / 2., start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * row_idx as f32, 3.), true);
+            if column_idx < board_size.x - 1 {
+                if walls.vertical_walls[column_idx + (board_size.x - 1) * row_idx] == WallStatus::CLOSED {
+                    wall_spawn_system(&mut commands, Vec3::new(start_left + TILE_SIZE.0 * (column_idx + 1) as f32, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * row_idx as f32, 2.), true);
+                }
+            }
+            // HORIZONTAL WALLS
+            if row_idx < board_size.y - 1 {
+                if walls.horizontal_walls[column_idx + board_size.x * row_idx] == WallStatus::CLOSED {
+                    wall_spawn_system(&mut commands, Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * column_idx as f32, start_top - TILE_SIZE.0 * (row_idx as f32 + 1.), 2.), false);
                 }
             }
         }
@@ -76,13 +82,13 @@ fn wall_spawn_system(
     vertical: bool,
 ) {
     let wall_dimensions = if vertical {
-        Some(Vec2::new(5., 48.))
+        Some(Vec2::new(5., 50.))
     } else {
-        Some(Vec2::new(48., 5.))
+        Some(Vec2::new(50., 5.))
     };
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            color: Color::rgb(0.25, 0.25, 0.75),
+            color: Color::rgb(0., 0., 0.),
             custom_size: wall_dimensions,
             ..default()
         },
