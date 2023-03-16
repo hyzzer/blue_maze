@@ -27,14 +27,7 @@ pub struct Board {
 
 impl Board {
     pub fn is_wall_open(&self, box_idx: usize, direction: &Direction) -> WallStatus {
-        if box_idx == self.size * self.size {
-            if *direction == Direction::RIGHT {
-                return WallStatus::OPEN;
-            } else {
-                return WallStatus::CLOSED;
-            }
-        }
-        let row_idx = (((box_idx + 1)/self.size) as f32).floor();
+        let row_idx = (box_idx as f32 / self.size as f32).floor();
         match direction {
             Direction::UP => {
                 if box_idx < self.size {
