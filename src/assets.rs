@@ -21,7 +21,6 @@ pub const TILE_TOP: &str = "tile_top.png";
 pub const TILE_BOTTOM: &str = "tile_bottom.png";
 pub const TILE_ROAD: &str = "tile_road.png";
 pub const TILE_LEFT_01: &str = "tile_left_01.png";
-pub const TILE_LEFT_02: &str = "tile_left_02.png";
 pub const TILE_RIGHT_01: &str = "tile_right_01.png";
 
 pub const TILE_BACKGROUND: &str = "tile_background.png";
@@ -63,4 +62,4 @@ pub const PLAYER_SIZE: (f32, f32) = (410., 560.);
 pub const SPRITE_SCALE: f32 = 0.07;
 
 pub const TILE_SIZE: (f32, f32) = (48., 48.);
-pub const WALL_SIZE: (f32, f32) = (5., 48.);
+pub const WALL_SIZE: (f32, f32) = (5., 50.);

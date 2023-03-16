@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use board::WallStatus;
+use game::GamePlugin;
 use player::PlayerPlugin;
 use tilemap::TilemapPlugin;
 
@@ -18,25 +18,12 @@ pub struct WinSize {
 }
 
 #[derive(Resource)]
-pub struct BoardSize {
-    pub x: usize,
-    pub y: usize,
-}
-
-#[derive(Resource)]
-pub struct Walls {
-    horizontal_walls: Vec<WallStatus>,
-    vertical_walls: Vec<WallStatus>,
-}
-
-#[derive(Resource)]
 pub struct GameTextures {
     player: Handle<Image>,
     tile_top: Handle<Image>,
     tile_bottom: Handle<Image>,
     tile_road: Handle<Image>,
     tile_left_01: Handle<Image>,
-    tile_left_02: Handle<Image>,
     tile_right_01: Handle<Image>,
     tile_background: Handle<Image>,
     tile_top_left_corner: Handle<Image>,
@@ -82,9 +69,7 @@ fn setup_system(
         tile_bottom: asset_server.load(assets::TILE_BOTTOM),
         tile_road: asset_server.load(assets::TILE_ROAD),
         tile_left_01: asset_server.load(assets::TILE_LEFT_01),
-        tile_left_02: asset_server.load(assets::TILE_LEFT_02),
         tile_right_01: asset_server.load(assets::TILE_RIGHT_01),
-
         tile_background: asset_server.load(assets::TILE_BACKGROUND),
         tile_top_left_corner: asset_server.load(assets::TILE_TOP_LEFT_CORNER),
         tile_top_right_corner_02: asset_server.load(assets::TILE_TOP_RIGHT_CORNER_02),
@@ -111,17 +96,8 @@ fn setup_system(
 }
 
 fn main() {
-    let game = game::Game::new(difficulty::Difficulty::Easy);
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.)))
-        .insert_resource(BoardSize {
-            x: game.board.size,
-            y: game.board.size,
-        })
-        .insert_resource(Walls {
-            horizontal_walls: game.board.horizontal_walls,
-            vertical_walls: game.board.vertical_walls,
-        })
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 title: "Blue Maze".to_string(),
@@ -134,8 +110,9 @@ fn main() {
             },
             ..default()
           }))
+        .add_startup_system(setup_system)
+        .add_plugin(GamePlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(TilemapPlugin)
-        .add_startup_system(setup_system)
         .run();
 }

@@ -5,6 +5,5 @@ pub struct Player;
 
 #[derive(Component)]
 pub struct Position {
-    pub x: usize,
-    pub y: usize,
+    pub value: usize,
 }

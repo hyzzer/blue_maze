@@ -1,6 +1,7 @@
 use bevy::prelude::*;
-use crate::board::WallStatus;
-use crate::{GameTextures, BoardSize, Walls};
+use crate::board::{WallStatus, Board};
+use crate::game::{BoardSize};
+use crate::{GameTextures};
 use crate::assets::{TILE_SIZE};
 
 pub struct TilemapPlugin;
@@ -15,8 +16,8 @@ impl Plugin for TilemapPlugin {
 fn tilemap_spawn_system(
     mut commands: Commands,
     game_textures: Res<GameTextures>,
+    board: Res<Board>,
     board_size: Res<BoardSize>,
-    walls: Res<Walls>,
 ) {
     let start_left = - (board_size.x as f32 / 2.) * TILE_SIZE.0;
     let start_top = (board_size.y as f32 / 2.) * TILE_SIZE.1;
@@ -131,13 +132,13 @@ fn tilemap_spawn_system(
             tile_spawn_system(&mut commands, tile_sprite, Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * column_idx as f32, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * row_idx as f32, 1.), None);
             // VERTICAL WALLS
             if column_idx < board_size.x - 1 {
-                if walls.vertical_walls[column_idx + (board_size.x - 1) * row_idx] == WallStatus::CLOSED {
+                if board.vertical_walls[column_idx + (board_size.x - 1) * row_idx] == WallStatus::CLOSED {
                     wall_spawn_system(&mut commands, Vec3::new(start_left + TILE_SIZE.0 * (column_idx + 1) as f32, start_top - TILE_SIZE.1 / 2. - TILE_SIZE.0 * row_idx as f32, 2.), true);
                 }
             }
             // HORIZONTAL WALLS
             if row_idx < board_size.y - 1 {
-                if walls.horizontal_walls[column_idx + board_size.x * row_idx] == WallStatus::CLOSED {
+                if board.horizontal_walls[column_idx + board_size.x * row_idx] == WallStatus::CLOSED {
                     wall_spawn_system(&mut commands, Vec3::new(start_left + TILE_SIZE.0 / 2. + TILE_SIZE.0 * column_idx as f32, start_top - TILE_SIZE.0 * (row_idx as f32 + 1.), 2.), false);
                 }
             }

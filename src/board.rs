@@ -1,8 +1,9 @@
+use bevy::prelude::Resource;
 use rand::Rng;
 use std::fmt;
 
 #[derive(Debug, PartialEq)]
-enum Direction {
+pub enum Direction {
     UP,
     DOWN,
     LEFT,
@@ -16,6 +17,7 @@ pub enum WallStatus {
     EDGE,
 }
 
+#[derive(Resource)]
 pub struct Board {
     pub size: usize,
     pub player_coordinates: [usize; 2],
@@ -24,7 +26,14 @@ pub struct Board {
 }
 
 impl Board {
-    fn is_wall_open(&self, box_idx: usize, direction: &Direction) -> WallStatus {
+    pub fn is_wall_open(&self, box_idx: usize, direction: &Direction) -> WallStatus {
+        if box_idx == self.size * self.size {
+            if *direction == Direction::RIGHT {
+                return WallStatus::OPEN;
+            } else {
+                return WallStatus::CLOSED;
+            }
+        }
         let row_idx = (((box_idx + 1)/self.size) as f32).floor();
         match direction {
             Direction::UP => {

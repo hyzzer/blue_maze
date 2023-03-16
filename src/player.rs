@@ -1,9 +1,10 @@
 use bevy::prelude::*;
 use bevy::time::FixedTimestep;
-use crate::assets::{PLAYER_SIZE, SPRITE_SCALE};
+use crate::assets::{SPRITE_SCALE, TILE_SIZE};
 use crate::components::{Player, Position};
-use crate::game::{SPEED};
-use crate::{GameTextures, WinSize};
+use crate::game::BoardSize;
+use crate::{GameTextures};
+use crate::board::{Direction, Board, WallStatus};
 
 pub struct PlayerPlugin;
 
@@ -22,14 +23,17 @@ impl Plugin for PlayerPlugin {
 fn player_spawn_system(
     mut commands: Commands,
     game_textures: Res<GameTextures>,
-    win_size: Res<WinSize>
+    board_size: Res<BoardSize>,
 ) {
-    let bottom = - win_size.h / 2.;
-
+    let start_position = Vec3::new(
+        - (board_size.x as f32 / 2.) * TILE_SIZE.0 - TILE_SIZE.0 / 2.,
+        - (board_size.y as f32 / 2.) * TILE_SIZE.1 + TILE_SIZE.1 / 2.,
+        4.,
+    );
     commands.spawn(SpriteBundle {
         texture: game_textures.player.clone(),
         transform: Transform {
-            translation: Vec3::new(0., bottom + PLAYER_SIZE.1 / 2. * SPRITE_SCALE, 4.),
+            translation: start_position,
             scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
             ..default()
         },
@@ -37,27 +41,47 @@ fn player_spawn_system(
     })
     .insert(Player)
     .insert(Position {
-        x: 0,
-        y: 0,
+        value: board_size.x * board_size.y,
     });
 }
 
 fn player_keyboard_event_system(
     keyboard: Res<Input<KeyCode>>,
-    mut query: Query<&mut Transform, With<Player>>,
+    board: Res<Board>,
+    board_size: Res<BoardSize>,
+    mut query: Query<(&mut Transform, &mut Position), With<Position>>,
 ) {
-    if let Ok(mut transform) = query.get_single_mut() {
+    if let Ok((mut transform, mut position)) = query.get_single_mut() {       
+        let direction: Direction;
+        let translation: (f32, f32);
         if keyboard.pressed(KeyCode::Up) {
-            transform.translation.y += SPEED;
+            direction = Direction::UP;
+            translation = (0., 1.);
         }
-        if keyboard.pressed(KeyCode::Down) {
-            transform.translation.y -= SPEED;
+        else if keyboard.pressed(KeyCode::Down) {
+            direction = Direction::DOWN;
+            translation = (0., - 1.);
         }
-        if keyboard.pressed(KeyCode::Right) {
-            transform.translation.x += SPEED;
+        else if keyboard.pressed(KeyCode::Right) {
+            direction = Direction::RIGHT;
+            translation = (1., 0.);
         }
-        if keyboard.pressed(KeyCode::Left) {
-            transform.translation.x -= SPEED;
+        else if keyboard.pressed(KeyCode::Left) {
+            direction = Direction::LEFT;
+            translation = (- 1., 0.);
+        }
+        else {
+            return;
+        }
+        println!("{} : {}", translation.0, translation.1);
+        if board.is_wall_open(position.value, &direction) == WallStatus::OPEN {
+            transform.translation.x += translation.0 * TILE_SIZE.0;
+            transform.translation.y += translation.1 * TILE_SIZE.1;
+            if position.value == board_size.x * board_size.y {
+                position.value = board_size.x * (board_size.y - 1);
+            } else {
+                position.value += translation.0 as usize + (translation.1 as usize * board_size.x);
+            }
         }
     }
 }
