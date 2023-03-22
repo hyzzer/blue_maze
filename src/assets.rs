@@ -20,16 +20,16 @@ impl PlayerSprite {
 pub const TILE_TOP: &str = "tile_top.png";
 pub const TILE_BOTTOM: &str = "tile_bottom.png";
 pub const TILE_ROAD: &str = "tile_road.png";
-pub const TILE_LEFT_01: &str = "tile_left_01.png";
-pub const TILE_RIGHT_01: &str = "tile_right_01.png";
+pub const TILE_LEFT: &str = "tile_left.png";
+pub const TILE_RIGHT: &str = "tile_right.png";
 
 pub const TILE_BACKGROUND: &str = "tile_background.png";
 
 pub const TILE_TOP_LEFT_CORNER: &str = "tile_top_left_corner.png";
+pub const TILE_TOP_RIGHT_CORNER: &str = "tile_top_right_corner.png";
 
-pub const TILE_TOP_RIGHT_CORNER_02: &str = "tile_top_right_corner_02.png";
 
-pub const TILE_BOTTOM_LEFT_CORNER_02: &str = "tile_bottom_left_corner_02.png";
+pub const TILE_BOTTOM_LEFT_CORNER: &str = "tile_bottom_left_corner.png";
 
 pub const TILE_BOTTOM_RIGHT_CORNER: &str = "tile_bottom_right_corner.png";
 
@@ -37,8 +37,8 @@ pub const TILE_ENTER_TOP_01: &str = "tile_enter_top_01.png";
 pub const TILE_ENTER_TOP_02: &str = "tile_enter_top_02.png";
 
 
-pub const TILE_EXIT_BOTTOM: &str = "tile_exit_bottom.png";
-pub const TILE_EXIT_BELOW: &str = "tile_exit_below.png";
+pub const TILE_EXIT_BOTTOM_01: &str = "tile_exit_bottom_01.png";
+pub const TILE_EXIT_BOTTOM_02: &str = "tile_exit_bottom_02.png";
 
 pub const DOOR_CLOSED: &str = "door_closed.png";
 pub const CHEST_CLOSED: &str = "chest_closed.png";
