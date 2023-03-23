@@ -1,7 +1,8 @@
-use bevy::prelude::*;
+use bevy::{prelude::*};
 use game::GamePlugin;
 use player::PlayerPlugin;
 use tilemap::TilemapPlugin;
+use winit::{self, event_loop};
 
 mod game;
 mod difficulty;
@@ -96,13 +97,19 @@ fn setup_system(
 }
 
 fn main() {
+    let event_loop = event_loop::EventLoop::new();
+
+    let monitor = event_loop.available_monitors().nth(0).unwrap().size();
+    let monitor_width = monitor.width as f32;
+    let monitor_height = monitor.height as f32;
+
     App::new()
         .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 title: "Blue Maze".to_string(),
-                width: 1500.0,
-                height: 700.0,
+                width: monitor_width,
+                height: monitor_height,
                 decorations: true,
               ..default()
             },

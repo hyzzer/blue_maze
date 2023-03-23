@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 bevy = { version = "0.9.1", features = ["dynamic"] }
 rand = "0.8.5"
+winit = "0.28.3"
 
 [build]
 rustflags = ["-C", "link-arg=-fuse-ld=lld"]
