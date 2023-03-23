@@ -20,12 +20,12 @@ pub struct WinSize {
 #[derive(Resource)]
 pub struct GameTextures {
     player: Handle<Image>,
+    tile_road: Handle<Image>,
+    tile_background: Handle<Image>,
     tile_top: Handle<Image>,
     tile_bottom: Handle<Image>,
-    tile_road: Handle<Image>,
     tile_left: Handle<Image>,
     tile_right: Handle<Image>,
-    tile_background: Handle<Image>,
     tile_top_left_corner: Handle<Image>,
     tile_top_right_corner: Handle<Image>,
     tile_bottom_left_corner: Handle<Image>,
@@ -34,8 +34,6 @@ pub struct GameTextures {
     tile_enter_top_02: Handle<Image>,
     tile_exit_bottom_01: Handle<Image>,
     tile_exit_bottom_02: Handle<Image>,
-    door_closed: Handle<Image>,
-    chest_closed: Handle<Image>,
     tile_outline_top: Handle<Image>,
     tile_outline_top_left: Handle<Image>,
     tile_outline_top_right: Handle<Image>,
@@ -45,6 +43,8 @@ pub struct GameTextures {
     tile_outline_left: Handle<Image>,
     tile_outline_right: Handle<Image>,
     tile_road_enter: Handle<Image>,
+    door_closed: Handle<Image>,
+    chest_closed: Handle<Image>,
 }
 
 fn setup_system(
@@ -101,11 +101,9 @@ fn main() {
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
                 title: "Blue Maze".to_string(),
-                // mode: WindowMode::Fullscreen,
                 width: 1500.0,
                 height: 700.0,
                 decorations: true,
-                // resizable: false,
               ..default()
             },
             ..default()

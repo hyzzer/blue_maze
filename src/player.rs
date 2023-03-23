@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::assets::{SPRITE_SCALE, TILE_SIZE};
+use crate::assets::{TILE_SIZE, PLAYER_SIZE};
 use crate::components::Player;
 use crate::game::BoardSize;
 use crate::{GameTextures};
@@ -25,11 +25,12 @@ fn player_spawn_system(
         - (board_size.y as f32 / 2.) * TILE_SIZE.1 + TILE_SIZE.1 / 2.,
         4.,
     );
+    let sprite_scale = (TILE_SIZE.1 / 1.2) / PLAYER_SIZE.1;
     commands.spawn(SpriteBundle {
         texture: game_textures.player.clone(),
         transform: Transform {
             translation: start_player,
-            scale: Vec3::new(SPRITE_SCALE, SPRITE_SCALE, 1.),
+            scale: Vec3::new(sprite_scale, sprite_scale, 1.),
             ..default()
         },
         ..default()

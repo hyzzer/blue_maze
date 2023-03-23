@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use crate::board::{WallStatus, Board};
 use crate::game::{BoardSize};
 use crate::{GameTextures};
-use crate::assets::{TILE_SIZE};
+use crate::assets::{TILE_SIZE, WALL_SIZE};
 
 pub struct TilemapPlugin;
 
@@ -239,9 +239,9 @@ fn wall_spawn_system(
     vertical: bool,
 ) {
     let wall_dimensions = if vertical {
-        Some(Vec2::new(5., 50.))
+        Some(Vec2::new(WALL_SIZE.0, WALL_SIZE.1))
     } else {
-        Some(Vec2::new(50., 5.))
+        Some(Vec2::new(WALL_SIZE.1, WALL_SIZE.0))
     };
     commands.spawn(SpriteBundle {
         sprite: Sprite {
