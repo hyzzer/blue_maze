@@ -45,7 +45,8 @@ pub struct GameTextures {
     tile_road_enter: Handle<Image>,
     door_closed: Handle<Image>,
     door_open: Handle<Image>,
-    chest_closed: Handle<Image>,
+    chest_locked: Handle<Image>,
+    chest_unlocked: Handle<Image>,
 }
 
 fn setup_system(
@@ -65,9 +66,10 @@ fn setup_system(
     commands.insert_resource(win_size);
 
     let game_textures = GameTextures {
-        chest_closed: asset_server.load(assets::tilemap::CHEST_CLOSED),
-        door_closed: asset_server.load(assets::tilemap::DOOR_CLOSED),
-        door_open: asset_server.load(assets::tilemap::DOOR_OPEN),
+        chest_locked: asset_server.load(assets::objects::CHEST_LOCKED),
+        chest_unlocked: asset_server.load(assets::objects::CHEST_UNLOCKED),
+        door_closed: asset_server.load(assets::objects::DOOR_CLOSED),
+        door_open: asset_server.load(assets::objects::DOOR_OPEN),
         tile_top: asset_server.load(assets::tilemap::TILE_TOP),
         tile_bottom: asset_server.load(assets::tilemap::TILE_BOTTOM),
         tile_road: asset_server.load(assets::tilemap::TILE_ROAD),
