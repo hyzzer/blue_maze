@@ -168,15 +168,18 @@ fn player_keyboard_event_system(
                 return;
             }
             // START
-            if player.position == -1 && direction == Direction::RIGHT {
-                player.position = (board_size.x * (board_size.y - 1)) as isize;
-                commands.entity(player_entity).insert(CurrentMove {
-                    start: transform.translation,
-                    end: transform.translation + Vec3::new(TILE_SIZE.0, 0., 0.),
-                    timer: Timer::from_seconds(0.2, TimerMode::Once)
-                });
-
-
+            if player.position == -1 {
+                if direction == Direction::RIGHT {
+                    player.position = (board_size.x * (board_size.y - 1)) as isize;
+                    commands.entity(player_entity).insert(CurrentMove {
+                        start: transform.translation,
+                        end: transform.translation + Vec3::new(TILE_SIZE.0, 0., 0.),
+                        timer: Timer::from_seconds(0.2, TimerMode::Once)
+                    });
+                }
+                else {
+                    player.state = PlayerState::IdleRight;
+                }
                 return;
             }
             // END
@@ -184,18 +187,18 @@ fn player_keyboard_event_system(
                 commands.entity(player_entity).insert(CurrentMove {
                     start: transform.translation,
                     end: transform.translation + Vec3::new(TILE_SIZE.0, 0., 0.),
-                    timer: Timer::from_seconds(0.1, TimerMode::Once)
+                    timer: Timer::from_seconds(0.25, TimerMode::Once)
                 });
+                player.position = -2;
+                return;
+            }
 
+            if player.position == -2 {
                 player.state = PlayerState::OpenChest;
-
-                println!("GAGNER");
                 return;
             }
 
             if board.is_wall_open(player.position as usize, &direction) == WallStatus::OPEN {
-                println!("OPEN");
-
                 commands.entity(player_entity).insert(CurrentMove {
                     start: transform.translation,
                     end: transform.translation + Vec3::new(translation.0 as f32 * TILE_SIZE.0, -translation.1 as f32 * TILE_SIZE.1, 0.),
@@ -212,10 +215,7 @@ fn player_keyboard_event_system(
                     PlayerState::RunRight => PlayerState::IdleRight,
                     PlayerState::OpenChest => PlayerState::IdleRight,
                 };
-                println!("CLOSED");
             }
-            println!("translation : ({}, {})", translation.0, translation.1);
-            println!("position : {}\n", player.position);
         }
     }
 }
