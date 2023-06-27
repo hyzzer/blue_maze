@@ -1,16 +1,16 @@
-use bevy::{prelude::*};
-use game::GamePlugin;
-use player::PlayerPlugin;
-use tilemap::TilemapPlugin;
-use winit::{self, event_loop};
-
-mod game;
-mod difficulty;
-mod board;
-mod player;
-mod components;
 mod assets;
-mod tilemap;
+mod components;
+mod resources;
+mod systems;
+mod utils;
+
+use resources::animations::PlayerTextureAtlasConfig;
+use assets::player::PlayerSprite;
+use bevy::{prelude::*};
+use resources::game::GamePlugin;
+use systems::player::PlayerPlugin;
+use systems::tilemap::TilemapPlugin;
+use winit::{self, event_loop};
 
 #[derive(Resource)]
 pub struct WinSize {
@@ -20,7 +20,6 @@ pub struct WinSize {
 
 #[derive(Resource)]
 pub struct GameTextures {
-    player: Handle<Image>,
     tile_road: Handle<Image>,
     tile_background: Handle<Image>,
     tile_top: Handle<Image>,
@@ -45,6 +44,7 @@ pub struct GameTextures {
     tile_outline_right: Handle<Image>,
     tile_road_enter: Handle<Image>,
     door_closed: Handle<Image>,
+    door_open: Handle<Image>,
     chest_closed: Handle<Image>,
 }
 
@@ -65,33 +65,32 @@ fn setup_system(
     commands.insert_resource(win_size);
 
     let game_textures = GameTextures {
-        player: asset_server.load(assets::PlayerSprite::Golem01.get_path()),
-        tile_top: asset_server.load(assets::TILE_TOP),
-        tile_bottom: asset_server.load(assets::TILE_BOTTOM),
-        tile_road: asset_server.load(assets::TILE_ROAD),
-        tile_left: asset_server.load(assets::TILE_LEFT),
-        tile_right: asset_server.load(assets::TILE_RIGHT),
-        tile_background: asset_server.load(assets::TILE_BACKGROUND),
-        tile_top_left_corner: asset_server.load(assets::TILE_TOP_LEFT_CORNER),
-        tile_top_right_corner: asset_server.load(assets::TILE_TOP_RIGHT_CORNER),
-        tile_bottom_left_corner: asset_server.load(assets::TILE_BOTTOM_LEFT_CORNER),
-        tile_bottom_right_corner: asset_server.load(assets::TILE_BOTTOM_RIGHT_CORNER),
-        tile_enter_top_01: asset_server.load(assets::TILE_ENTER_TOP_01),
-        tile_enter_top_02: asset_server.load(assets::TILE_ENTER_TOP_02),
-        tile_exit_bottom_01: asset_server.load(assets::TILE_EXIT_BOTTOM_01),
-        chest_closed: asset_server.load(assets::CHEST_CLOSED),
-        door_closed: asset_server.load(assets::DOOR_CLOSED),
-        tile_exit_bottom_02: asset_server.load(assets::TILE_EXIT_BOTTOM_02),
-        tile_outline_top: asset_server.load(assets::TILE_OUTLINE_TOP),
-        tile_outline_top_left: asset_server.load(assets::TILE_OUTLINE_TOP_LEFT),
-        tile_outline_top_right: asset_server.load(assets::TILE_OUTLINE_TOP_RIGHT),
-        tile_outline_bottom: asset_server.load(assets::TILE_OUTLINE_BOTTOM),
-        tile_outline_bottom_left: asset_server.load(assets::TILE_OUTLINE_BOTTOM_LEFT),
-        tile_outline_bottom_right: asset_server.load(assets::TILE_OUTLINE_BOTTOM_RIGHT),
-        tile_outline_left: asset_server.load(assets::TILE_OUTLINE_LEFT),
-        tile_outline_right: asset_server.load(assets::TILE_OUTLINE_RIGHT),
-        tile_road_enter: asset_server.load(assets::TILE_ROAD_ENTER),
-
+        chest_closed: asset_server.load(assets::tilemap::CHEST_CLOSED),
+        door_closed: asset_server.load(assets::tilemap::DOOR_CLOSED),
+        door_open: asset_server.load(assets::tilemap::DOOR_OPEN),
+        tile_top: asset_server.load(assets::tilemap::TILE_TOP),
+        tile_bottom: asset_server.load(assets::tilemap::TILE_BOTTOM),
+        tile_road: asset_server.load(assets::tilemap::TILE_ROAD),
+        tile_left: asset_server.load(assets::tilemap::TILE_LEFT),
+        tile_right: asset_server.load(assets::tilemap::TILE_RIGHT),
+        tile_background: asset_server.load(assets::tilemap::TILE_BACKGROUND),
+        tile_top_left_corner: asset_server.load(assets::tilemap::TILE_TOP_LEFT_CORNER),
+        tile_top_right_corner: asset_server.load(assets::tilemap::TILE_TOP_RIGHT_CORNER),
+        tile_bottom_left_corner: asset_server.load(assets::tilemap::TILE_BOTTOM_LEFT_CORNER),
+        tile_bottom_right_corner: asset_server.load(assets::tilemap::TILE_BOTTOM_RIGHT_CORNER),
+        tile_enter_top_01: asset_server.load(assets::tilemap::TILE_ENTER_TOP_01),
+        tile_enter_top_02: asset_server.load(assets::tilemap::TILE_ENTER_TOP_02),
+        tile_exit_bottom_01: asset_server.load(assets::tilemap::TILE_EXIT_BOTTOM_01),
+        tile_exit_bottom_02: asset_server.load(assets::tilemap::TILE_EXIT_BOTTOM_02),
+        tile_outline_top: asset_server.load(assets::tilemap::TILE_OUTLINE_TOP),
+        tile_outline_top_left: asset_server.load(assets::tilemap::TILE_OUTLINE_TOP_LEFT),
+        tile_outline_top_right: asset_server.load(assets::tilemap::TILE_OUTLINE_TOP_RIGHT),
+        tile_outline_bottom: asset_server.load(assets::tilemap::TILE_OUTLINE_BOTTOM),
+        tile_outline_bottom_left: asset_server.load(assets::tilemap::TILE_OUTLINE_BOTTOM_LEFT),
+        tile_outline_bottom_right: asset_server.load(assets::tilemap::TILE_OUTLINE_BOTTOM_RIGHT),
+        tile_outline_left: asset_server.load(assets::tilemap::TILE_OUTLINE_LEFT),
+        tile_outline_right: asset_server.load(assets::tilemap::TILE_OUTLINE_RIGHT),
+        tile_road_enter: asset_server.load(assets::tilemap::TILE_ROAD_ENTER),
     };
     commands.insert_resource(game_textures);
 }
@@ -103,7 +102,10 @@ fn main() {
     let monitor_width = monitor.width as f32;
     let monitor_height = monitor.height as f32;
 
+    let player_texture_atlas_config = PlayerTextureAtlasConfig::new(PlayerSprite::OrcWarrior.get_path());
+
     App::new()
+    .insert_resource(player_texture_atlas_config)
         .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.)))
         .add_plugins(DefaultPlugins.set(WindowPlugin {
             window: WindowDescriptor {
