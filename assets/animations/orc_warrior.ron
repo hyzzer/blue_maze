@@ -1,0 +1,25 @@
+PlayerTextureAtlasConfig(
+    tile_size: (96., 68.),
+    animations: AnimationConfig(
+        idle_left: AtlasConfig(
+            texture_path: "orc_warrior/walk_left.png",
+            len: 1
+        ),
+        idle_right: AtlasConfig(
+            texture_path: "orc_warrior/walk_right.png",
+            len: 1
+        ),
+        run_left: AtlasConfig(
+            texture_path: "orc_warrior/run_left.png",
+            len: 6
+        ),
+        run_right: AtlasConfig(
+            texture_path: "orc_warrior/run_right.png",
+            len: 6
+        ),
+        open_chest: AtlasConfig(
+            texture_path: "orc_warrior/open_chest.png",
+            len: 4
+        ),
+    ),
+)
