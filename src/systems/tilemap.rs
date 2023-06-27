@@ -168,10 +168,10 @@ fn objects_spawn_system(
     ), 
         Some(Vec3::new(0.09, 0.09, 1.)
     ));
-    tile_spawn_system(&mut commands, game_textures.chest_closed.clone(),
+    tile_spawn_system(&mut commands, game_textures.chest_locked.clone(),
     Vec3::new(
         (board_size.x as f32 / 2. + 1.5) * TILE_SIZE.0,
-        (board_size.y as f32 / 2. - 0.5) * TILE_SIZE.1,
+        (board_size.y as f32 / 2. - 0.65) * TILE_SIZE.1,
         2.
     ), 
         Some(Vec3::splat(0.3))
