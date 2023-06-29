@@ -8,13 +8,9 @@ Take the control of an **adventurous orc** traversing through a **2D labyrinth**
   <img src="docs/images/bm.gif" />
 </p>
 
-</br>
-
 ## Technical Stack
 
 The game is developed using **Rust** with and **[Bevy](https://bevyengine.org/)**, a refreshingly simple data-driven game engine built in Rust. 
-
-</br>
 
 ## Algorithmic Foundation: Kruskal's Algorithm
 
@@ -29,9 +25,6 @@ The walls generation function works with the **[rand](https://docs.rs/rand/lates
 Every turn, a box and a direction are chosen randomly thanks to the ***rand::thread_rng()*** method. The goal is to generate **isize** (natural number) within \[0, *N*\[ where *N* represents the total number of boxes depending on the map's size and [0, 3] presuming 4 to be the number of walls in a 2D space.
 
 The ***thread_rng()*** method uses a PRNG algorithm **ChaCha block cipher with 12 pounds** made to be strong and unpredictable.
-
-
-</br>
 
 ## Installation Instructions
 
@@ -55,7 +48,5 @@ Follow these instructions to get the game up and running on **your local machine
    ```
    
 After the build process is complete, you should be able to see the game window pop up and you can start playing Blue-Maze!
-
-</br>
 
 **Note:** The game might take some time to compile depending on your system.
