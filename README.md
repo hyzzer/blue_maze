@@ -10,7 +10,7 @@ Take the control of an **adventurous orc** traversing through a **2D labyrinth**
 
 ## Technical Stack
 
-The game is developed using **Rust** with and **[Bevy](https://bevyengine.org/)**, a refreshingly simple data-driven game engine built in Rust. 
+The game is developed using **Rust** with **[Bevy](https://bevyengine.org/)**, a refreshingly simple data-driven game engine built in Rust. 
 
 ## Algorithmic Foundation: Kruskal's Algorithm
 
